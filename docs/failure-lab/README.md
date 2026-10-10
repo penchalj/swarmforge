@@ -1,0 +1,8 @@
+# Failure Lab: real failures from building SwarmForge
+
+| # | Symptom | Root cause | Fix | Prevention |
+|---|---------|-----------|-----|-----------|
+| 1 | "This rule has been removed from Bazel" | Unpinned Bazel; Bazelisk fetched 9.3.0, which removed native cc rules used by toolchains_llvm 1.4.0 | Pin Bazel 8 | Exact version in .bazelversion; CI check |
+| 2 | "No space left on device" during toolchain fetch | LLVM toolchain needs about 6 GB extracted | Freed disk | Disk check in forge doctor; CI cache |
+| 3 | ld.lld: libxml2.so.2 not found | Prebuilt LLVM depends on a host library; Ubuntu 26.04 ships only libxml2.so.16 | Build in pinned Ubuntu 24.04 image | One image for dev and CI |
+| 4 | 'features.h' file not found | Toolchain brings the compiler, not the C library headers (sysroot) | Add libc6-dev and libgcc-13-dev to image | Pinned image; later a downloaded sysroot |

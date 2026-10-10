@@ -1,0 +1,22 @@
+load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
+
+STRICT_COPTS = ["-Wall", "-Wextra", "-Werror"]
+
+cc_library(
+    name = "libtrack",
+    srcs = ["src/kalman_cv.cc"],
+    hdrs = ["include/libtrack/kalman_cv.h"],
+    strip_include_prefix = "include",
+    copts = STRICT_COPTS,
+    visibility = ["//visibility:public"],
+)
+
+cc_test(
+    name = "kalman_cv_test",
+    srcs = ["test/kalman_cv_test.cc"],
+    copts = STRICT_COPTS,
+    deps = [
+        ":libtrack",
+        "@googletest//:gtest_main",
+    ],
+)
