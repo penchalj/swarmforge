@@ -4,7 +4,6 @@ from detector import sim_detector
 
 
 class GenerateTest(unittest.TestCase):
-
     def test_shape(self):
         scenario, truth = sim_detector.generate(num_targets=2, num_frames=10)
         self.assertEqual(len(scenario.frames), 10)
@@ -19,7 +18,8 @@ class GenerateTest(unittest.TestCase):
 
     def test_noiseless_detections_match_truth(self):
         scenario, truth = sim_detector.generate(
-            num_targets=1, num_frames=5, dt=0.5, noise=0.0)
+            num_targets=1, num_frames=5, dt=0.5, noise=0.0
+        )
         x0, y0, vx, vy = truth[0]
         det = scenario.frames[4].detections[0]  # t = 2.0 s
         self.assertAlmostEqual(det.x, x0 + vx * 2.0)

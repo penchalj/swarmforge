@@ -2,7 +2,10 @@ load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
 
 # -Werror is not used here: generated Protobuf headers can trigger warnings
 # that we do not control. Our own warnings are enforced later by clang-tidy in CI.
-COPTS = ["-Wall", "-Wextra"]
+COPTS = [
+    "-Wall",
+    "-Wextra",
+]
 
 cc_library(
     name = "fusion",

@@ -10,7 +10,7 @@ namespace fusion {
 
 struct Config {
   double accel_noise = 0.1;
-  double meas_noise = 0.25;   // variance, m^2
+  double meas_noise = 0.25;  // variance, m^2
   double init_pos_var = 1.0;
   double init_vel_var = 100.0;
 };

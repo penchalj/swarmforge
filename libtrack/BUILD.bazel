@@ -1,13 +1,17 @@
 load("@rules_cc//cc:defs.bzl", "cc_library", "cc_test")
 
-STRICT_COPTS = ["-Wall", "-Wextra", "-Werror"]
+STRICT_COPTS = [
+    "-Wall",
+    "-Wextra",
+    "-Werror",
+]
 
 cc_library(
     name = "libtrack",
     srcs = ["src/kalman_cv.cc"],
     hdrs = ["include/libtrack/kalman_cv.h"],
-    strip_include_prefix = "include",
     copts = STRICT_COPTS,
+    strip_include_prefix = "include",
     visibility = ["//visibility:public"],
 )
 

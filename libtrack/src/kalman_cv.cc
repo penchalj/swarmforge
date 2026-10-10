@@ -27,7 +27,10 @@ void KalmanCV1D::Predict(double dt) {
   const double p01 = s_.p01 + dt * s_.p11 + q01;
   const double p10 = s_.p10 + dt * s_.p11 + q01;
   const double p11 = s_.p11 + q11;
-  s_.p00 = p00; s_.p01 = p01; s_.p10 = p10; s_.p11 = p11;
+  s_.p00 = p00;
+  s_.p01 = p01;
+  s_.p10 = p10;
+  s_.p11 = p11;
 }
 
 void KalmanCV1D::Update(double z) {
@@ -42,7 +45,10 @@ void KalmanCV1D::Update(double z) {
   const double p01 = (1.0 - k0) * s_.p01;
   const double p10 = s_.p10 - k1 * s_.p00;
   const double p11 = s_.p11 - k1 * s_.p01;
-  s_.p00 = p00; s_.p01 = p01; s_.p10 = p10; s_.p11 = p11;
+  s_.p00 = p00;
+  s_.p01 = p01;
+  s_.p10 = p10;
+  s_.p11 = p11;
 }
 
 }  // namespace libtrack

@@ -30,8 +30,14 @@ class Track2D {
     x_.Init(x, pos_var, vel_var);
     y_.Init(y, pos_var, vel_var);
   }
-  void Predict(double dt) { x_.Predict(dt); y_.Predict(dt); }
-  void Update(double mx, double my) { x_.Update(mx); y_.Update(my); }
+  void Predict(double dt) {
+    x_.Predict(dt);
+    y_.Predict(dt);
+  }
+  void Update(double mx, double my) {
+    x_.Update(mx);
+    y_.Update(my);
+  }
   const AxisState& x() const { return x_.state(); }
   const AxisState& y() const { return y_.state(); }
 

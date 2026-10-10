@@ -11,8 +11,12 @@ def generate(num_targets=3, num_frames=200, dt=0.1, noise=0.5, seed=42):
     """Returns (scenario, truth); truth[i] = (x0, y0, vx, vy) for target i+1."""
     rng = random.Random(seed)
     truth = [
-        (rng.uniform(-100, 100), rng.uniform(-100, 100),
-         rng.uniform(-5, 5), rng.uniform(-5, 5))
+        (
+            rng.uniform(-100, 100),
+            rng.uniform(-100, 100),
+            rng.uniform(-5, 5),
+            rng.uniform(-5, 5),
+        )
         for _ in range(num_targets)
     ]
     scenario = detection_pb2.Scenario()
@@ -39,8 +43,9 @@ def main(argv=None):
     parser.add_argument("--seed", type=int, default=42)
     args = parser.parse_args(argv)
 
-    scenario, truth = generate(args.targets, args.frames, args.dt,
-                               args.noise, args.seed)
+    scenario, truth = generate(
+        args.targets, args.frames, args.dt, args.noise, args.seed
+    )
     with open(args.out, "wb") as f:
         f.write(scenario.SerializeToString())
     for i, (_, _, vx, vy) in enumerate(truth, start=1):
