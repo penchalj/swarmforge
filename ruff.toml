@@ -1,0 +1,7 @@
+line-length = 88
+target-version = "py312"
+
+[lint]
+# E/W: style errors, F: real bugs (unused, undefined), I: import order,
+# B: likely bugs, UP: modern Python syntax
+select = ["E", "W", "F", "I", "B", "UP"]
