@@ -10,3 +10,11 @@ llvm = use_extension("@toolchains_llvm//toolchain/extensions:llvm.bzl", "llvm")
 llvm.toolchain(llvm_version = "17.0.6")
 use_repo(llvm, "llvm_toolchain")
 register_toolchains("@llvm_toolchain//:all")
+
+# Python: hermetic interpreter, same version everywhere
+bazel_dep(name = "rules_python", version = "1.7.0")
+python = use_extension("@rules_python//python/extensions:python.bzl", "python")
+python.toolchain(python_version = "3.12", is_default = True)
+
+# Protobuf: shared data contracts for C++ and Python
+bazel_dep(name = "protobuf", version = "29.3")
