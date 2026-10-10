@@ -6,3 +6,4 @@
 | 2 | "No space left on device" during toolchain fetch | LLVM toolchain needs about 6 GB extracted | Freed disk | Disk check in forge doctor; CI cache |
 | 3 | ld.lld: libxml2.so.2 not found | Prebuilt LLVM depends on a host library; Ubuntu 26.04 ships only libxml2.so.16 | Build in pinned Ubuntu 24.04 image | One image for dev and CI |
 | 4 | 'features.h' file not found | Toolchain brings the compiler, not the C library headers (sysroot) | Add libc6-dev and libgcc-13-dev to image | Pinned image; later a downloaded sysroot |
+| 5 | protobuf port.cc: "variable does not have a constant initializer" | Protobuf 30+ needs constexpr std::string; libc++ 17 (LLVM 17) allocates during constant evaluation | Pin protobuf 29.3 | Upgrade toolchain to LLVM 19+ before moving to protobuf 30+; record version compatibility in an ADR |
