@@ -8,3 +8,10 @@ build:ubsan --copt=-fsanitize=undefined --linkopt=-fsanitize=undefined
 build:release -c opt
 
 try-import %workspace%/user.bazelrc
+
+# CI: keep downloads and action results in ~/.cache, where the workflow
+# saves and restores them between runs.
+common:ci --repository_cache=/home/ubuntu/.cache/bazel-repo
+common:ci --color=yes --curses=no --show_progress_rate_limit=10
+build:ci --disk_cache=/home/ubuntu/.cache/bazel-disk
+test:ci --test_output=errors --test_summary=terse
