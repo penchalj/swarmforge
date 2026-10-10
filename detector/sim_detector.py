@@ -7,7 +7,7 @@ import sys
 from proto import detection_pb2
 
 
-def generate(num_targets=3, num_frames=200, dt=0.1, noise=0.5, seed=42):
+def generate(num_targets=3, num_frames=200, dt=0.1, noise=0.5, seed=42, sensor="radar"):
     """Returns (scenario, truth); truth[i] = (x0, y0, vx, vy) for target i+1."""
     rng = random.Random(seed)
     truth = [
@@ -29,7 +29,7 @@ def generate(num_targets=3, num_frames=200, dt=0.1, noise=0.5, seed=42):
             det.target_id = i + 1
             det.x = x0 + vx * t + rng.gauss(0.0, noise)
             det.y = y0 + vy * t + rng.gauss(0.0, noise)
-            det.sensor = "radar"
+            det.sensor = sensor
     return scenario, truth
 
 
