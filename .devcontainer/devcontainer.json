@@ -1,0 +1,22 @@
+{
+  "name": "SwarmForge",
+  "build": {
+    "dockerfile": "../docker/dev.Dockerfile",
+    "context": ".."
+  },
+  "remoteUser": "ubuntu",
+  "workspaceFolder": "/workspace",
+  "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind",
+  "mounts": [
+    "source=swarmforge-bazel-cache,target=/home/ubuntu/.cache,type=volume"
+  ],
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "BazelBuild.vscode-bazel",
+        "llvm-vs-code-extensions.vscode-clangd",
+        "ms-python.python"
+      ]
+    }
+  }
+}
