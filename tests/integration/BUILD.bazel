@@ -1,0 +1,10 @@
+load("@rules_python//python:defs.bzl", "py_test")
+
+py_test(
+    name = "fusion_e2e_test",
+    size = "small",
+    srcs = ["fusion_e2e_test.py"],
+    data = ["//fusion-node:fusion_node"],
+    env = {"FUSION_NODE": "$(rootpath //fusion-node:fusion_node)"},
+    deps = ["//detector:sim_detector_lib"],
+)

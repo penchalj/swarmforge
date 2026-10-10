@@ -1,0 +1,22 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+py_library(
+    name = "sim_detector_lib",
+    srcs = ["sim_detector.py"],
+    visibility = ["//visibility:public"],
+    deps = ["//proto:detection_py_pb2"],
+)
+
+py_binary(
+    name = "detector",
+    srcs = ["sim_detector.py"],
+    main = "sim_detector.py",
+    deps = ["//proto:detection_py_pb2"],
+)
+
+py_test(
+    name = "sim_detector_test",
+    size = "small",
+    srcs = ["sim_detector_test.py"],
+    deps = [":sim_detector_lib"],
+)

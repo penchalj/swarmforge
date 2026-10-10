@@ -1,0 +1,35 @@
+load("@rules_cc//cc:defs.bzl", "cc_binary", "cc_library", "cc_test")
+
+# -Werror is not used here: generated Protobuf headers can trigger warnings
+# that we do not control. Our own warnings are enforced later by clang-tidy in CI.
+COPTS = ["-Wall", "-Wextra"]
+
+cc_library(
+    name = "fusion",
+    srcs = ["src/fusion.cc"],
+    hdrs = ["src/fusion.h"],
+    copts = COPTS,
+    deps = [
+        "//libtrack",
+        "//proto:detection_cc_proto",
+    ],
+)
+
+cc_binary(
+    name = "fusion_node",
+    srcs = ["src/main.cc"],
+    copts = COPTS,
+    visibility = ["//visibility:public"],
+    deps = [":fusion"],
+)
+
+cc_test(
+    name = "fusion_test",
+    size = "small",
+    srcs = ["test/fusion_test.cc"],
+    copts = COPTS,
+    deps = [
+        ":fusion",
+        "@googletest//:gtest_main",
+    ],
+)

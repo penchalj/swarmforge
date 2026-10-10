@@ -1,0 +1,23 @@
+load("@protobuf//bazel:cc_proto_library.bzl", "cc_proto_library")
+load("@protobuf//bazel:proto_library.bzl", "proto_library")
+load("@protobuf//bazel:py_proto_library.bzl", "py_proto_library")
+
+proto_library(
+    name = "detection_proto",
+    srcs = ["detection.proto"],
+    visibility = ["//visibility:public"],
+)
+
+# Generated C++ code
+cc_proto_library(
+    name = "detection_cc_proto",
+    visibility = ["//visibility:public"],
+    deps = [":detection_proto"],
+)
+
+# Generated Python code
+py_proto_library(
+    name = "detection_py_pb2",
+    visibility = ["//visibility:public"],
+    deps = [":detection_proto"],
+)

@@ -1,0 +1,22 @@
+syntax = "proto3";
+
+package swarmforge.v1;
+
+// One sensor measurement of one target.
+message Detection {
+  uint32 target_id = 1;  // simulated ID; real data association comes later
+  double x = 2;          // metres
+  double y = 3;          // metres
+  string sensor = 4;     // e.g. "radar"
+}
+
+// All detections at one point in time.
+message Frame {
+  double timestamp_s = 1;
+  repeated Detection detections = 2;
+}
+
+// A recorded sequence of frames.
+message Scenario {
+  repeated Frame frames = 1;
+}
