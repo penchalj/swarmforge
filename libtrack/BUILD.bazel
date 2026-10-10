@@ -13,6 +13,7 @@ cc_library(
 
 cc_test(
     name = "kalman_cv_test",
+    size = "small",
     srcs = ["test/kalman_cv_test.cc"],
     copts = STRICT_COPTS,
     deps = [
