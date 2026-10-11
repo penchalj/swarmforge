@@ -25,3 +25,12 @@ cc_test(
         "@googletest//:gtest_main",
     ],
 )
+
+cc_test(
+    name = "sanitizer_canary_test",
+    size = "small",
+    srcs = ["test/sanitizer_canary_test.cc"],
+    copts = STRICT_COPTS,
+    tags = ["manual"],  # deliberately broken; run only by the sanitizer lane
+    deps = ["@googletest//:gtest_main"],
+)
