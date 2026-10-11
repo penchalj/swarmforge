@@ -1,4 +1,5 @@
-# Pinned build environment: same image for laptops and CI
+# Pinned build environment: same image for laptops and CI, amd64 and arm64.
+# The digest is a multi-arch index; Docker picks the right variant per machine.
 FROM ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55
 
 # libc6-dev + libgcc-13-dev = the target system's C library headers and startup
@@ -10,17 +11,20 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         clang-format-18 shellcheck \
     && rm -rf /var/lib/apt/lists/*
 
-# Bazelisk, pinned
-RUN curl -fsSL -o /usr/local/bin/bazel \
-      https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-linux-amd64 \
-    && chmod +x /usr/local/bin/bazel
-
-# Lint tools, pinned: buildifier (Bazel files) and ruff (Python)
-RUN curl -fsSL -o /usr/local/bin/buildifier \
-      https://github.com/bazelbuild/buildtools/releases/download/v7.3.1/buildifier-linux-amd64 \
-    && chmod +x /usr/local/bin/buildifier \
-    && curl -fsSL https://github.com/astral-sh/ruff/releases/download/0.6.9/ruff-x86_64-unknown-linux-gnu.tar.gz \
-       | tar -xz -C /usr/local/bin --strip-components=1 ruff-x86_64-unknown-linux-gnu/ruff
+# Pinned tools, downloaded for the image's own CPU architecture.
+ARG TARGETARCH
+RUN case "${TARGETARCH}" in \
+      amd64) arch=amd64; ruff_arch=x86_64 ;; \
+      arm64) arch=arm64; ruff_arch=aarch64 ;; \
+      *) echo "unsupported architecture: ${TARGETARCH}" >&2; exit 1 ;; \
+    esac \
+    && curl -fsSL -o /usr/local/bin/bazel \
+         "https://github.com/bazelbuild/bazelisk/releases/download/v1.25.0/bazelisk-linux-${arch}" \
+    && curl -fsSL -o /usr/local/bin/buildifier \
+         "https://github.com/bazelbuild/buildtools/releases/download/v7.3.1/buildifier-linux-${arch}" \
+    && curl -fsSL "https://github.com/astral-sh/ruff/releases/download/0.6.9/ruff-${ruff_arch}-unknown-linux-gnu.tar.gz" \
+         | tar -xz -C /usr/local/bin --strip-components=1 "ruff-${ruff_arch}-unknown-linux-gnu/ruff" \
+    && chmod +x /usr/local/bin/bazel /usr/local/bin/buildifier
 
 # Writable home and cache for any user ID (CI runners use UID 1001, laptops 1000)
 RUN mkdir -p /home/ubuntu/.cache \
