@@ -5,7 +5,7 @@ on:
   push:
     branches: [main]
 
-# A newer push to the same branch cancels the older, now pointless run.
+# Pull requests cancel outdated runs; every commit on main gets a full run.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
@@ -115,3 +115,168 @@ jobs:
             /tmp/bazel-cache/bazel-disk
             /tmp/bazel-cache/bazel-repo
           key: ${{ steps.cache.outputs.cache-primary-key }}
+
+  sanitizers:
+    name: Sanitizers (${{ matrix.config }})
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - config: asan
+            canary: "AsanCanary.*"
+          - config: ubsan
+            canary: "UbsanCanary.*"
+    env:
+      SKIP_IMAGE_BUILD: "1"
+      BAZEL_CACHE_DIR: /tmp/bazel-cache
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Free disk space
+        run: |
+          sudo rm -rf /usr/share/dotnet /usr/local/lib/android /opt/ghc /opt/hostedtoolcache/CodeQL
+          df -h /
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Build dev image (layer-cached)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/dev.Dockerfile
+          tags: swarmforge-dev
+          load: true
+          cache-from: type=gha,scope=dev-image
+          cache-to: type=gha,mode=max,scope=dev-image
+
+      # Own cache per sanitizer; falls back to the normal build's cache for downloads.
+      - name: Restore Bazel cache
+        id: cache
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            /tmp/bazel-cache/bazel-disk
+            /tmp/bazel-cache/bazel-repo
+          key: bazel-${{ matrix.config }}-${{ hashFiles('MODULE.bazel.lock', '.bazelversion', 'docker/dev.Dockerfile') }}-${{ github.sha }}
+          restore-keys: |
+            bazel-${{ matrix.config }}-${{ hashFiles('MODULE.bazel.lock', '.bazelversion', 'docker/dev.Dockerfile') }}-
+            bazel-${{ runner.os }}-${{ hashFiles('MODULE.bazel.lock', '.bazelversion', 'docker/dev.Dockerfile') }}-
+
+      - name: Test all targets with ${{ matrix.config }}
+        run: ./scripts/dev.sh bazel test --config=ci --config=${{ matrix.config }} //...
+
+      - name: Prove ${{ matrix.config }} catches a planted bug
+        env:
+          CONFIG: ${{ matrix.config }}
+          CANARY: ${{ matrix.canary }}
+        run: |
+          if ./scripts/dev.sh bazel test --config=ci --config="$CONFIG" \
+               //libtrack:sanitizer_canary_test --test_filter="$CANARY"; then
+            echo "::error::The canary passed: $CONFIG is NOT detecting bugs"
+            exit 1
+          fi
+          echo "$CONFIG correctly detected the planted bug."
+
+      - name: Save Bazel cache (main only)
+        if: github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            /tmp/bazel-cache/bazel-disk
+            /tmp/bazel-cache/bazel-repo
+          key: ${{ steps.cache.outputs.cache-primary-key }}
+
+  arm64:
+    name: Build and test (arm64)
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 60
+    env:
+      SKIP_IMAGE_BUILD: "1"
+      BAZEL_CACHE_DIR: /tmp/bazel-cache
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: docker/setup-buildx-action@v4
+
+      - name: Build dev image for arm64 (layer-cached)
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          file: docker/dev.Dockerfile
+          tags: swarmforge-dev
+          load: true
+          cache-from: type=gha,scope=dev-image-arm64
+          cache-to: type=gha,mode=max,scope=dev-image-arm64
+
+      - name: Restore Bazel cache
+        id: cache
+        uses: actions/cache/restore@v6
+        with:
+          path: |
+            /tmp/bazel-cache/bazel-disk
+            /tmp/bazel-cache/bazel-repo
+          key: bazel-arm64-${{ hashFiles('MODULE.bazel.lock', '.bazelversion', 'docker/dev.Dockerfile') }}-${{ github.sha }}
+          restore-keys: |
+            bazel-arm64-${{ hashFiles('MODULE.bazel.lock', '.bazelversion', 'docker/dev.Dockerfile') }}-
+            bazel-arm64-
+
+      - name: Build and test natively on arm64
+        run: ./scripts/dev.sh bazel test --config=ci //...
+
+      - name: Package edge binary and a test scenario
+        run: |
+          ./scripts/dev.sh bash -c '
+            set -euo pipefail
+            bazel build --config=ci //fusion-node:fusion_node
+            mkdir -p out
+            cp -L bazel-bin/fusion-node/fusion_node out/
+            bazel run --config=ci //detector:detector -- \
+              --out=/workspace/out/scenario.pb --targets=3 > out/truth.txt'
+          file out/fusion_node
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: edge-arm64
+          path: out/
+          retention-days: 7
+
+      - name: Save Bazel cache (main only)
+        if: github.ref == 'refs/heads/main'
+        uses: actions/cache/save@v6
+        with:
+          path: |
+            /tmp/bazel-cache/bazel-disk
+            /tmp/bazel-cache/bazel-repo
+          key: ${{ steps.cache.outputs.cache-primary-key }}
+
+  edge-smoke:
+    name: Edge smoke test (arm64 under QEMU)
+    needs: arm64
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: edge-arm64
+          path: out
+
+      - uses: docker/setup-qemu-action@v3
+        with:
+          platforms: arm64
+
+      - name: Run the arm64 binary on an emulated arm64 Ubuntu
+        run: |
+          chmod +x out/fusion_node
+          docker run --rm --platform linux/arm64 -v "$PWD/out":/edge:ro \
+            ubuntu:24.04@sha256:534baea6a22c03a63003dbc8dbe78fe34bc0d7e595d9a9dc9834884ff530eb55 \
+            bash -c 'uname -m && /edge/fusion_node /edge/scenario.pb' | tee tracks.csv
+          rows=$(grep -c '^[0-9]' tracks.csv || true)
+          if [ "$rows" -ne 3 ]; then
+            echo "::error::expected 3 tracks from the arm64 binary, got $rows"
+            exit 1
+          fi
+          echo "The arm64 binary ran under QEMU and produced $rows tracks."
+          echo "Ground truth from the detector:"
+          cat out/truth.txt
