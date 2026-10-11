@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.1.1](https://github.com/penchalj/swarmforge/compare/v0.1.0...v0.1.1) (2026-10-11)
+
+
+### Bug Fixes
+
+* **forge:** clearer disk space hint ([#27](https://github.com/penchalj/swarmforge/issues/27)) ([d0e65d0](https://github.com/penchalj/swarmforge/commit/d0e65d071f265eda1c0deee72c6068d1dda41a1c))
+
 ## 0.1.0 (2026-10-11)
 
 
