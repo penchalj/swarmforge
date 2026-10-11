@@ -14,3 +14,11 @@
 | Build and test (arm64) | 9 min 14 s | 2min 39s | native arm64 runner |
 | Edge smoke test (QEMU) | 24 s | 15 s | arm64 binary on emulated arm64 Ubuntu |
 | Whole PR (parallel) | about 14 min | 4min 34s | limited by the slowest job |
+
+## Image pipeline
+
+| Job | First main run (cold) | Warm main run | Notes |
+|-----|-----------------------|---------------|-------|
+| Image build and scan (amd64) | 11 min 36 s | 6 min 58 s | release tests, -c opt build, Compose test, SBOM, Grype |
+| Image build and scan (arm64) | 6 min 26 s | 4 min 49 s | native arm64 runner |
+| Publish and sign (main only) | 1 min 14 s | 38 s | multi-arch tag, cosign sign + verify; skipped on PRs |
