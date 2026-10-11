@@ -102,7 +102,7 @@ jobs:
           upload-artifact: false
 
       - name: Vulnerability scan, fail on critical (fusion-node)
-        uses: anchore/scan-action@v5
+        uses: anchore/scan-action@v7
         with:
           image: swarmforge/fusion-node:ci
           fail-build: true
@@ -110,7 +110,7 @@ jobs:
           output-format: table
 
       - name: Vulnerability scan, fail on critical (detector)
-        uses: anchore/scan-action@v5
+        uses: anchore/scan-action@v7
         with:
           image: swarmforge/detector:ci
           fail-build: true
