@@ -21,7 +21,7 @@ jobs:
     env:
       SKIP_IMAGE_BUILD: "1"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - uses: docker/setup-buildx-action@v3
 
@@ -46,7 +46,7 @@ jobs:
       SKIP_IMAGE_BUILD: "1"
       BAZEL_CACHE_DIR: /tmp/bazel-cache
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0 # full history, needed to diff a PR against main
 
