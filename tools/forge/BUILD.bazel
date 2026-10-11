@@ -1,0 +1,19 @@
+load("@rules_python//python:defs.bzl", "py_binary", "py_library", "py_test")
+
+py_library(
+    name = "forge_lib",
+    srcs = ["forge.py"],
+)
+
+py_binary(
+    name = "forge",
+    srcs = ["forge.py"],
+    main = "forge.py",
+)
+
+py_test(
+    name = "forge_test",
+    size = "small",
+    srcs = ["forge_test.py"],
+    deps = [":forge_lib"],
+)
