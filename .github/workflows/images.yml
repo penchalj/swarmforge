@@ -70,6 +70,9 @@ jobs:
             bazel-release-${{ matrix.arch }}-${{ hashFiles('MODULE.bazel.lock', '.bazelversion', 'docker/dev.Dockerfile') }}-
             ${{ matrix.fallback_cache }}-${{ hashFiles('MODULE.bazel.lock', '.bazelversion', 'docker/dev.Dockerfile') }}-
 
+      - name: Unit tests on the release build (test what you ship)
+        run: ./scripts/dev.sh bazel test --config=ci --config=release //...
+
       - name: Build release binaries with Bazel
         run: ./scripts/dev.sh ./scripts/package.sh --config=ci
 
