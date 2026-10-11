@@ -171,6 +171,8 @@ Working principles throughout:
 
 ## Try it in 5 minutes
 
+Requirements: Docker with Compose, Python 3, and [cosign](https://docs.sigstore.dev/cosign/system_config/installation/) for the signature check.
+
 ```bash
 git clone https://github.com/penchalj/swarmforge && cd swarmforge
 python3 tools/forge/forge.py doctor        # checks your machine, explains fixes
