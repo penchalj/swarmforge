@@ -5,7 +5,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 list() {
-  find . -path './bazel-*' -prune -o -path './.git' -prune -o \
+  find . -path './bazel-*' -prune -o -path './.git' -prune -o -path './dist' -prune -o \
     -type f \( "$@" \) -print | sort
 }
 

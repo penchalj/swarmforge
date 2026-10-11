@@ -2,3 +2,5 @@
 user.bazelrc
 .cache/
 /out/
+/dist/
+/dist/
