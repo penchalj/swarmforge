@@ -14,6 +14,6 @@
     { "type": "docs", "section": "Documentation" }
   ],
   "packages": {
-    ".": { "package-name": "swarmforge" }
+    ".": { "package-name": "swarmforge", "initial-version": "0.1.0" }
   }
 }
