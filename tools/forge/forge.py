@@ -63,7 +63,7 @@ def check_disk(root: Path, free_bytes: int | None = None) -> Result:
     detail = f"{free_gb:.1f} GB free"
     fix = (
         "The LLVM toolchain needs about 6 GB (Failure Lab #2). "
-        "Try: docker image prune -f; ./scripts/dev.sh bazel clean"
+        "Try: docker image prune -f, then ./scripts/dev.sh bazel clean"
     )
     if free_gb < FAIL_BELOW_GB:
         return Result("fail", "Disk space", detail, fix)
