@@ -1,5 +1,15 @@
 # Changelog
 
+## [0.1.2](https://github.com/penchalj/swarmforge/compare/v0.1.1...v0.1.2) (2026-10-11)
+
+
+### Documentation
+
+* add introduction, objective, progress, approach and tools to README ([#32](https://github.com/penchalj/swarmforge/issues/32)) ([fa1579d](https://github.com/penchalj/swarmforge/commit/fa1579d7b7102fc8e89ff0aeaacefe326811bc39))
+* add README with results, architecture and role mapping ([#31](https://github.com/penchalj/swarmforge/issues/31)) ([fc1b46d](https://github.com/penchalj/swarmforge/commit/fc1b46d1ab594895efb80ce7b18840f5d2fac4fd))
+* add release and rollback drill, failure lab entries 9-11 ([#29](https://github.com/penchalj/swarmforge/issues/29)) ([66282e1](https://github.com/penchalj/swarmforge/commit/66282e1805bc5590cd4878427b4c524be698f601))
+* list requirements for the try-it guide ([#33](https://github.com/penchalj/swarmforge/issues/33)) ([f5bc0e9](https://github.com/penchalj/swarmforge/commit/f5bc0e9abb7b611ae956f678ad84f27148fd3e04))
+
 ## [0.1.1](https://github.com/penchalj/swarmforge/compare/v0.1.0...v0.1.1) (2026-10-11)
 
 
