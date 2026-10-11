@@ -13,3 +13,11 @@ updates:
       interval: weekly
     commit-message:
       prefix: build
+    ignore:
+      # OS and Python major/minor upgrades are planned changes (toolchain
+      # compatibility, see Failure Lab #3), not automatic weekly updates.
+      # Digest updates for the pinned tags (security fixes) stay enabled.
+      - dependency-name: "ubuntu"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
+      - dependency-name: "python"
+        update-types: ["version-update:semver-major", "version-update:semver-minor"]
